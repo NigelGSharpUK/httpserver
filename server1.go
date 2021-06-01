@@ -42,6 +42,7 @@ func handler2(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Perhaps core is not running?")
 		fmt.Println("Perhaps core is still downloading the blockchain?")
 		fmt.Println("Perhaps the firewall is interfering?")
+		fmt.Println("Perhaps you don't have the correct password for your bitcoin core? (Set with -rpcpassword=notmypassword in core")
 		fmt.Println(e)
 	} else {
 		defer res.Body.Close()
