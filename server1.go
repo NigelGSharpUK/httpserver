@@ -38,6 +38,10 @@ func handler2(w http.ResponseWriter, r *http.Request) {
 
 	res, e := http.DefaultClient.Do(req)
 	if e != nil {
+		fmt.Println("ERROR: Could not talk to core on local machine.")
+		fmt.Println("Perhaps core is not running?")
+		fmt.Println("Perhaps core is still downloading the blockchain?")
+		fmt.Println("Perhaps the firewall is interfering?")
 		fmt.Println(e)
 	} else {
 		defer res.Body.Close()
