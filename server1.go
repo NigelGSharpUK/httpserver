@@ -1,4 +1,5 @@
-// Server1 is a minimal "echo" server
+// This program forwards requests from js in the browser
+// to the core json-rpc server on port 8332
 package main
 
 import (
@@ -32,7 +33,7 @@ func handler2(w http.ResponseWriter, r *http.Request) {
 
 	// Talk to core
 	req, _ := http.NewRequest("POST", "http://127.0.0.1:8332/", json2)
-	req.SetBasicAuth("", "renoir")
+	req.SetBasicAuth("", "notmypassword")
 	req.Header.Add("content-type", "application/JSON;")
 
 	res, e := http.DefaultClient.Do(req)
@@ -43,6 +44,8 @@ func handler2(w http.ResponseWriter, r *http.Request) {
 		// Respond with core's response
 		body, _ := ioutil.ReadAll(res.Body)
 		fmt.Println(string(body))
+		// The following tells the browser to allow requests from 127.0.0.1
+		// This helps with CORS restrictions - Cross-Origin Resource Sharing
 		if origin == "http://127.0.0.1" {
 			w.Header().Add("Access-Control-Allow-Origin", origin)
 		}
