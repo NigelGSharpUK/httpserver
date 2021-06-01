@@ -3,16 +3,51 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/", handler) // each request calls handler
+	http.HandleFunc("/", handler2) // each request calls handler
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
 
 // handler echoes the Path component of the requested URL.
-func handler(w http.ResponseWriter, r *http.Request) {
+/*func handler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
+}*/
+
+func handler2(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Request received, handler2 called")
+
+	// Get the json request string
+	json2 := r.Body
+
+	// Get the request origin
+	origin := r.Header.Get("Origin")
+	fmt.Println(origin)
+	fmt.Println(json2)
+
+	// Talk to core
+	req, _ := http.NewRequest("POST", "http://127.0.0.1:8332/", json2)
+	req.SetBasicAuth("", "renoir")
+	req.Header.Add("content-type", "application/JSON;")
+
+	res, e := http.DefaultClient.Do(req)
+	if e != nil {
+		fmt.Println(e)
+	} else {
+		defer res.Body.Close()
+		// Respond with core's response
+		body, _ := ioutil.ReadAll(res.Body)
+		fmt.Println(string(body))
+		if origin == "http://127.0.0.1" {
+			w.Header().Add("Access-Control-Allow-Origin", origin)
+		}
+		w.Write(body)
+		//fmt.Fprintf(w, "%q\n", string(body))
+	}
+
 }
