@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
@@ -48,14 +49,13 @@ func handler2(w http.ResponseWriter, r *http.Request) {
 		defer res.Body.Close()
 		// Respond with core's response
 		body, _ := ioutil.ReadAll(res.Body)
-		fmt.Println(string(body))
+		fmt.Print(strings.TrimSpace(string(body)))
 		// The following tells the browser to allow requests from 127.0.0.1
 		// This helps with CORS restrictions - Cross-Origin Resource Sharing
 		if origin == "http://127.0.0.1" {
 			w.Header().Add("Access-Control-Allow-Origin", origin)
 		}
-		w.Write(body)
-		//fmt.Fprintf(w, "%q\n", string(body))
+		w.Write([]byte(strings.TrimSpace(string(body))))
 	}
 
 }
